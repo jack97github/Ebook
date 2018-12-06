@@ -21,3 +21,9 @@ $ratio: 375 / 10;
   justify-content: flex-end;
   align-items: center;
 }
+
+@mixin ellipsis {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}

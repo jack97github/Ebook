@@ -22,25 +22,31 @@
     </transition>
     <ebook-setting-font></ebook-setting-font>
     <ebook-setting-font-popup></ebook-setting-font-popup>
+    <ebook-setting-theme></ebook-setting-theme>
+    <ebook-setting-progess></ebook-setting-progess>
   </div>
 </template>
 
 <script>
 import EbookSettingFontPopup from './EbookSettingFontPopup'
 import EbookSettingFont from './EbookSettingFont'
+import EbookSettingTheme from './EbookSettingTheme'
+import EbookSettingProgess from './EbookSettingProgess'
 import { ebookMixin } from '../../utils/mixin'
 export default {
   components: {
     EbookSettingFont,
-    EbookSettingFontPopup
+    EbookSettingFontPopup,
+    EbookSettingTheme,
+    EbookSettingProgess
   },
   mixins: [ebookMixin],
   methods: {
-    showSetting(key){
+    showSetting (key) {
       this.setSettingVisible(key)
     }
   }
-};
+}
 </script>
 
 <style lang="scss" rel="stylesheet/scss" scoped>

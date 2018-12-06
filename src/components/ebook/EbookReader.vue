@@ -9,26 +9,36 @@
   import Epub from 'epubjs'
   import {
     getFontFamily,
-    saveFontFamily, 
+    saveFontFamily,
     getFontSize,
-    saveFontSize
-    } from '../../utils/localstorage';
+    saveFontSize,
+    getTheme,
+    saveTheme,
+    getLocation
+    } from '../../utils/localstorage'
   global.ePub = Epub
   export default {
     mixins: [ebookMixin],
     methods: {
+      // 左滑翻页
       prevPage () {
         if (this.rendition) {
-          this.rendition.prev()
+          this.rendition.prev().then(() => {
+            this.refreshLocation()
+          })
           this.hideTitleAndMenu()
         }
       },
+      // 右滑翻页
       nextPage () {
         if (this.rendition) {
-          this.rendition.next()
+          this.rendition.next().then(() => {
+            this.refreshLocation()
+          })
           this.hideTitleAndMenu()
         }
       },
+      // 控制菜单显示隐藏
       toggleTitleAndMenu () {
         if (this.menuVisible) {
           this.setSettingVisible(-1)
@@ -41,6 +51,7 @@
         this.setSettingVisible(-1)
         this.setFontFamilyVisible(false)
       },
+      // 设置全局字号大小
       initFontSize () {
         let fontSize = getFontSize(this.fileName)
         if (!fontSize) {
@@ -50,6 +61,7 @@
           this.setDefaultFontSize(fontSize)
         }
       },
+      // 设置全局字体风格
       initFontFamily () {
         let font = getFontFamily(this.fileName)
         if (!font) {
@@ -59,18 +71,43 @@
           this.setDefaultFontFamily(font)
         }
       },
-      initEpub () {
-        const url = 'http://192.168.0.138:9000/epub/' + this.fileName + '.epub'
-        this.book = new Epub(url)
-        this.setCurrentBook(this.book)
+      // 设置全局背景风格
+      initTheme () {
+        let defaultTheme = getTheme(this.fileName)
+        if (!defaultTheme) {
+          defaultTheme = this.themeList[0].name
+          saveTheme(this.fileName, defaultTheme)
+        }
+        this.setDefaultTheme(defaultTheme)
+        this.themeList.forEach(theme => {
+          this.rendition.themes.register(theme.name, theme.style)
+        })
+        this.rendition.themes.select(defaultTheme)
+      },
+      // 重复代码重构  --> 阅读器渲染初始化过程
+      initRendition () {
         this.rendition = this.book.renderTo('read', {
           width: innerWidth,
           height: innerHeight
         })
-        this.rendition.display().then(() => {
-          this.initFontSize()
-          this.initFontFamily()
+        const location = getLocation(this.fileName)
+          this.display(location, () => {
+            this.initTheme()
+            this.initFontSize()
+            this.initFontFamily()
+            this.initGlobalStyle()
         })
+        this.rendition.hooks.content.register(contents => {
+          Promise.all([
+            contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/daysOne.css`),
+            contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/cabin.css`),
+            contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/montserrat.css`),
+            contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/tangerine.css`)
+          ]).then(() => {})
+        })
+      },
+      // 重复代码重构  --> 手势操作初始化
+      initGesture () {
         this.rendition.on('touchstart', event => {
           this.touchStartX = event.changedTouches[0].clientX
           this.touchStartTime = event.timeStamp
@@ -88,13 +125,21 @@
           // event.preventDefault()
           event.stopPropagation()
         })
-        this.rendition.hooks.content.register(contents => {
-          Promise.all([
-            contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/daysOne.css`),
-            contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/cabin.css`),
-            contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/montserrat.css`),
-            contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/tangerine.css`)
-          ]).then(() => {})
+      },
+      // 阅读器解析
+      initEpub () {
+        const url = process.env.VUE_APP_RES_URL + '/epub/' + this.fileName + '.epub'
+        this.book = new Epub(url)
+        this.setCurrentBook(this.book)
+        this.initRendition()
+        this.initGesture()
+        // 计算每页的字数  分页功能
+        this.book.ready.then(() => {
+          return this.book.locations.generate(750 * (window.innerWidth / 375) * (getFontSize(this.fileName) / 16))
+          .then((locations) => {
+            this.setBookAvailable(true)
+            this.refreshLocation()
+          })
         })
       }
     },
