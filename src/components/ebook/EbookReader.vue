@@ -16,6 +16,7 @@
     saveTheme,
     getLocation
     } from '../../utils/localstorage'
+  import { flatten } from '../../utils/book'
   global.ePub = Epub
   export default {
     mixins: [ebookMixin],
@@ -45,11 +46,6 @@
           this.setFontFamilyVisible(false)
         }
         this.setMenuVisible(!this.menuVisible)
-      },
-      hideTitleAndMenu () {
-        this.setMenuVisible(false)
-        this.setSettingVisible(-1)
-        this.setFontFamilyVisible(false)
       },
       // 设置全局字号大小
       initFontSize () {
@@ -126,6 +122,27 @@
           event.stopPropagation()
         })
       },
+      // 获取书籍封面 标题 作者信息
+      parseBook () {
+        this.book.loaded.cover.then(cover => {
+          this.book.archive.createUrl(cover).then(url => {
+            this.setCover(url)
+          })
+          this.book.loaded.metadata.then(metadata => {
+            this.setMetadata(metadata)
+          })
+          this.book.loaded.navigation.then(nav => {
+            const navItem = flatten(nav.toc)
+            function find(item, level = 0) {
+              return !item.parent ? level : find(navItem.filter(parentItem => parentItem.id === item.parent)[0], ++level)
+            }
+            navItem.forEach(item => {
+              item.level = find(item)
+            })
+            this.setNavigation(navItem)
+          })
+        })
+      },
       // 阅读器解析
       initEpub () {
         const url = process.env.VUE_APP_RES_URL + '/epub/' + this.fileName + '.epub'
@@ -133,6 +150,7 @@
         this.setCurrentBook(this.book)
         this.initRendition()
         this.initGesture()
+        this.parseBook()
         // 计算每页的字数  分页功能
         this.book.ready.then(() => {
           return this.book.locations.generate(750 * (window.innerWidth / 375) * (getFontSize(this.fileName) / 16))

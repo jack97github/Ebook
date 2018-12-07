@@ -37,19 +37,12 @@
 
 <script>
 import { ebookMixin } from '../../utils/mixin'
-import { getReadTime } from '../../utils/localstorage'
 export default {
   mixins: [ebookMixin],
   computed: {
     // 获取章节标题
     getSectionName () {
-      if (this.section) {
-        const sectionInfo = this.currentBook.section(this.section)
-        if (sectionInfo && sectionInfo.href) {
-          return this.currentBook.navigation.get(sectionInfo.href).label
-        }
-      }
-      return ''
+      return this.section ? this.navigation[this.section].label : ''
     }
   },
   methods: {
@@ -97,19 +90,6 @@ export default {
     // 进度条拖动样式
     updateProgressBackground () {
       this.$refs.progress.style.backgroundSize = `${this.progress}% 100%`
-    },
-    // 获取阅读时间  -->格式化处理
-    getReadTimeByMinute (fileName) {
-      const readTime = getReadTime(this.fileName)
-      if (!readTime) {
-        return 0
-      } else {
-        return Math.ceil(readTime / 60)
-      }
-    },
-    // 设置阅读时间
-    getReadText () {
-      return this.$t('book.haveRead').replace('$1', this.getReadTimeByMinute(this.fileName))
     }
   },
   updated () {
