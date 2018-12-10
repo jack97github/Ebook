@@ -8,8 +8,10 @@
         <input
           class="slide-contents-search-input"
           type="text"
+          v-model="searchText"
           :placeholder="$t('book.searchHint')"
-          @click="showSearchPage()"
+          @keyup.enter.exact="search()"
+          @click="showSearchPage"
         >
       </div>
       <div
@@ -43,12 +45,22 @@
         <span class="slide-contents-item-label"
         :class="{'selected': section === index}"
         :style="contentItemStyle(item)"
-        @click="displayNavigation(item.href)">{{item.label}}</span>
+        @click="displayContent(item.href)">{{item.label}}</span>
         <span class="slide-contents-item-page"></span>
       </div>
     </scroll>
-    <scroll class="slide-search-list" :top="66" :bottom="48" v-show="searchVisible">
-      <slot></slot>
+    <scroll class="slide-search-list"
+    :top="66"
+    :bottom="48"
+    v-show="searchVisible">
+      <div
+      class="slide-search-item"
+      v-for="(item, index) in searchList"
+      :key="index"
+      v-html="item.excerpt"
+      @click="displayContent(item.cfi, true)">
+      {{item.excerpt}}
+      </div>
     </scroll>
   </div>
 </template>
@@ -64,7 +76,9 @@ export default {
   },
   data() {
     return {
-      searchVisible: false
+      searchVisible: false,
+      searchList: null,
+      searchText: ''
     }
   },
   methods: {
@@ -75,6 +89,8 @@ export default {
     // 隐藏搜索框
     hideSearchPage () {
       this.searchVisible = false
+      this.searchText = ''
+      this.searchList = null
     },
     // 动态绑定style 选中章节高亮显示
     contentItemStyle (item) {
@@ -82,12 +98,16 @@ export default {
         marginLeft: `${px2rem(item.level) * 15}rem`
       }
     },
-    // 选中章节蒙板消失动画
-    displayNavigation (target) {
+    // 点击事件回调 ————> 蒙板消失
+    displayContent (target, highlight = false) {
       this.display(target, () => {
         this.hideTitleAndMenu()
+        if (highlight) {
+          this.currentBook.rendition.annotations.highlight(target)
+        }
       })
     },
+    // 搜索方法封装
     doSearch(q) {
       return Promise.all(
         this.currentBook.spine.spineItems.map(
@@ -95,14 +115,24 @@ export default {
           .then(section.find.bind(section, q))
           .finally(section.unload.bind(section)))
       ).then(results => Promise.resolve([].concat.apply([], results)))
+    },
+    // 全局搜索
+    search () {
+      if (this.searchText && this.searchText.length > 0) {
+        this.doSearch(this.searchText).then(list => {
+          this.searchList = list
+          this.searchList.map(item => {
+            item.excerpt = item.excerpt = item.excerpt.replace(this.searchText, `<span class="content-search-text">${this.searchText}</span>`)
+            return item
+          })
+        })
+      }
     }
   },
   mounted () {
-    // this.currentBook.ready.then(() => {
-    //   this.doSearch('added').then(results => {
-    //     console.log(results)
-    //   })
-    // })
+    this.doSearch('added').then(list => {
+      this.searchList = list
+    })
   }
 }
 </script>
@@ -208,6 +238,17 @@ export default {
         @include ellipsis;
       }
       .slide-contents-item-page {}
+    }
+  }
+  .slide-search-list {
+    width: 100%;
+    padding: 0 px2rem(15);
+    box-sizing: border-box;
+    .slide-search-item {
+      font-size: px2rem(14);
+      line-height: px2rem(16);
+      padding: px2rem(20) 0;
+      box-sizing: border-box;
     }
   }
 }
