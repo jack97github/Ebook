@@ -37,15 +37,15 @@
 </template>
 
 <script>
-import { FONT_SIZE_LIST } from "../../utils/book";
-import { ebookMixin } from "../../utils/mixin";
-import { saveFontSize } from "../../utils/localstorage";
+import { FONT_SIZE_LIST } from '../../utils/book'
+import { ebookMixin } from '../../utils/mixin'
+import { saveFontSize } from '../../utils/localstorage'
 export default {
   mixins: [ebookMixin],
   data() {
     return {
       fontSizeList: FONT_SIZE_LIST
-    };
+    }
   },
   methods: {
     setFontSize(fontSize) {
@@ -66,7 +66,7 @@ export default {
   position: absolute;
   bottom: px2rem(48);
   left: 0;
-  z-index: 101;
+  z-index: 160;
   display: flex;
   flex-direction: column;
   width: 100%;

@@ -25,8 +25,12 @@
         <img class="slide-contents-book-img" :src="cover">
       </div>
       <div class="slide-contents-book-info-wrapper">
-        <div class="slide-contents-book-title">{{metadata.title}}</div>
-        <div class="slide-contents-book-author">{{metadata.creator}}</div>
+        <div class="slide-contents-book-title">
+          <span class="slide-contents-book-title-text">{{metadata.title}}</span>
+        </div>
+        <div class="slide-contents-book-author">
+          <span class="slide-contents-book-author-text">{{metadata.creator}}</span>
+        </div>
       </div>
       <div class="slide-contents-book-progress-wrapper">
         <div class="slide-contents-book-progress">
@@ -46,7 +50,7 @@
         :class="{'selected': section === index}"
         :style="contentItemStyle(item)"
         @click="displayContent(item.href)">{{item.label}}</span>
-        <span class="slide-contents-item-page"></span>
+        <span class="slide-contents-item-page">{{item.page}}</span>
       </div>
     </scroll>
     <scroll class="slide-search-list"
@@ -193,16 +197,23 @@ export default {
       padding: 0 px2rem(10);
       box-sizing: border-box;
       .slide-contents-book-title {
-        width: px2rem(153.75);
+        // width: px2rem(153.75);
         font-size: px2rem(14);
         line-height: px2rem(16);
-        @include ellipsis2(2);
+        @include left;
+        .slide-contents-book-title-text {
+          @include ellipsis2(3);
+        }
       }
       .slide-contents-book-author {
-        width: px2rem(153.75);
+        // width: px2rem(153.75);
         font-size: px2rem(12);
+        line-height: px2rem(14);
         margin-top: px2rem(5);
-        @include ellipsis;
+        @include left;
+        .slide-contents-book-author-text {
+          @include ellipsis2(1);
+        }
       }
     }
     .slide-contents-book-progress-wrapper {
@@ -237,7 +248,10 @@ export default {
         line-height: px2rem(16);
         @include ellipsis;
       }
-      .slide-contents-item-page {}
+      .slide-contents-item-page {
+        flex: 0 0 px2rem(30);
+        font-size: px2rem(10);
+      }
     }
   }
   .slide-search-list {

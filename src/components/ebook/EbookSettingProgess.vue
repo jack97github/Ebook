@@ -27,7 +27,7 @@
           </div>
         </div>
         <div class="text-wrapper">
-          <span class="progress-section-text">{{getSectionName}}</span>
+          <span class="progress-section-text">{{getSectionName()}}</span>
           <span>{{bookAvailable ? progress + '%' : '加载中...'}}</span>
         </div>
       </div>
@@ -39,12 +39,6 @@
 import { ebookMixin } from '../../utils/mixin'
 export default {
   mixins: [ebookMixin],
-  computed: {
-    // 获取章节标题
-    getSectionName () {
-      return this.section ? this.navigation[this.section].label : ''
-    }
-  },
   methods: {
     // 进度条拖动结束松手调用的方法
     onProgressChange (progress) {
@@ -104,7 +98,7 @@ export default {
   position: absolute;
   bottom: px2rem(48);
   left: 0;
-  z-index: 101;
+  z-index: 160;
   width: 100%;
   height: px2rem(90);
   background: white;

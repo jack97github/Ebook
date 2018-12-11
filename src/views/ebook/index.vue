@@ -1,9 +1,11 @@
 <template>
   <div class="ebook" ref="ebook">
+    <ebook-header></ebook-header>
     <ebook-title></ebook-title>
     <ebook-reader></ebook-reader>
     <ebook-menu></ebook-menu>
     <ebook-bookmark></ebook-bookmark>
+    <ebook-footer></ebook-footer>
   </div>
 </template>
 
@@ -12,6 +14,8 @@ import EbookReader from '../../components/ebook/EbookReader'
 import EbookTitle from '../../components/ebook/EbookTitle'
 import EbookMenu from '../../components/ebook/EbookMenu'
 import EbookBookmark from '../../components/ebook/EbookBookmark'
+import EbookHeader from '../../components/ebook/EbookHeader'
+import EbookFooter from '../../components/ebook/EbookFooter'
 import { ebookMixin } from '../../utils/mixin'
 import { getReadTime, saveReadTime } from '../../utils/localstorage'
 export default {
@@ -20,7 +24,9 @@ export default {
     EbookReader,
     EbookTitle,
     EbookMenu,
-    EbookBookmark
+    EbookBookmark,
+    EbookHeader,
+    EbookFooter
   },
   watch: {
     offsetY(v) {
@@ -40,7 +46,7 @@ export default {
       this.$refs.ebook.style.transition = 'all .2s linear'
       setTimeout(() => {
         this.$refs.ebook.style.transition = ''
-      }, 600)
+      }, 200)
     },
     // 下拉设置top值
     move (v) {

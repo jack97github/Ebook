@@ -1,4 +1,4 @@
-const getters = {
+const book = {
   fileName: state => state.book.fileName,
   menuVisible: state => state.book.menuVisible,
   settingVisible: state => state.book.settingVisible,
@@ -20,4 +20,4 @@ const getters = {
   isBookmark: state => state.book.isBookmark
 }
 
-export default getters
+export default book

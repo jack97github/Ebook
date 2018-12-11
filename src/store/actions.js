@@ -47,7 +47,7 @@ const actions = {
   setPaginate: ({ commit }, paginate) => {
     return commit('SET_PAGINATE', paginate)
   },
-  setPagelist: ({ commit }, pagelist) => {
+  setPageList: ({ commit }, pagelist) => {
     return commit('SET_PAGELIST', pagelist)
   },
   setIsBookmark({ commit }, isBookmark) {
