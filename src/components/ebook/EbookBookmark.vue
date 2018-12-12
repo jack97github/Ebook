@@ -145,6 +145,7 @@
           saveBookmark(this.fileName, this.bookmark)
         })
       },
+      // 删除书签
       removeBookmark () {
         const currentLocation = this.currentBook.rendition.currentLocation()
         const cfi = currentLocation.start.cfi
