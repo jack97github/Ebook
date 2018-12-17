@@ -1,3 +1,4 @@
+@import "mixin";
 .slide-down-enter, .slide-down-leave-to {
   transform: translate3d(0, -100%, 0)
 }
@@ -18,7 +19,7 @@
 .fade-slide-right-leave-active,
 .title-move-enter-active, .title-move-leave-active,
 .hot-search-move-enter-active, .hot-search-move-leave-active {
-  transition: all .2s linear;
+  transition: all $animationTime linear;
 }
 .slide-up-enter, .slide-up-leave-to {
   transform: translate3d(0, px2rem(138), 0)

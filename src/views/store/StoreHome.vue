@@ -79,7 +79,6 @@ export default {
         this.featured = data.featured
         this.categoryList = data.categoryList
         this.categorys = data.categories
-        console.log(data)
       }
     })
   }

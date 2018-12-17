@@ -1,6 +1,28 @@
 import { mapGetters, mapActions } from 'vuex'
 import { themeList, addCss, removeAllCss, getReadTimeByMinute } from '../utils/book'
 import { saveLocation, getBookmark } from './localstorage'
+
+export const storeShelfMixin = {
+  computed: {
+    ...mapGetters([
+      'isEditMode',
+      'shelfList',
+      'shelfSelected',
+      'shelfTitleVisible',
+      'offsetY'
+    ])
+  },
+  methods: {
+    ...mapActions([
+      'setIsEditMode',
+      'setShelfList',
+      'setShelfSelected',
+      'setShelfTitleVisible',
+      'setOffsetY'
+    ])
+  }
+}
+
 export const ebookMixin = {
   computed: {
     ...mapGetters([
@@ -142,7 +164,13 @@ export const storeHomeMixin = {
       'setFlapCardVisible'
     ]),
     showBookDetail (book) {
-      
+      this.$router.push({
+        path: '/store/detail',
+        query: {
+          fileName: book.fileName,
+          category: book.categoryText
+        }
+      })
     }
   }
 }
