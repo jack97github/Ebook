@@ -5,7 +5,9 @@ const store = {
     isEditMode: false,
     shelfList: [],
     shelfSelected: [],
-    shelfTitleVisible: true
+    shelfTitleVisible: true,
+    shelfCategory: [],
+    currentType: 1
   },
   mutations: {
     SET_HOT_SEARCH_OFFSETY(state, offsetY) {
@@ -21,10 +23,16 @@ const store = {
       state.shelfList = list
     },
     SET_SHELF_SELECTED(state, selected) {
-      state.selected = selected
+      state.shelfSelected = selected
     },
     SET_SHELF_TITLE_VISIBLE(state, visible) {
       state.shelfTitleVisible = visible
+    },
+    SET_SHELF_CATEGORY(state, category) {
+      state.shelfCategory = category
+    },
+    SET_CURRENT_TYPE(state, type) {
+      state.currentType = type
     }
   }
 }

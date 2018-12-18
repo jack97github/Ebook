@@ -1,33 +1,64 @@
 <template>
   <div class="store-shelf">
     <shelf-title></shelf-title>
-    <scroll class="store-shelf-scroll-wrapper"
+    <scroll
+    class="store-shelf-scroll-wrapper"
     :top="0"
-    @onScroll="onScroll">
+    :bottom="scrollBottom"
+    @onScroll="onScroll"
+    ref="scroll">
       <shelf-search></shelf-search>
       <shelf-list></shelf-list>
+      <shelf-footer></shelf-footer>
     </scroll>
   </div>
 </template>
 
 <script>
-import { storeShelfMixin } from '../../utils/mixin'
 import ShelfTitle from '../../components/shelf/ShelfTitle'
+import { storeShelfMixin } from '../../utils/mixin'
 import Scroll from '../../components/common/Scroll'
 import ShelfSearch from '../../components/shelf/ShelfSearch'
 import ShelfList from '../../components/shelf/ShelfList'
+import shelfFooter from '../../components/shelf/shelfFooter'
+import { shelf } from '../../api/store'
+import { appendAddToShelf } from '../../utils/store'
 export default {
 mixins: [storeShelfMixin],
   components: {
     ShelfTitle,
     Scroll,
     ShelfSearch,
-    ShelfList
+    ShelfList,
+    shelfFooter
+  },
+  watch: {
+    isEditMode(isEditMode) {
+      this.scrollBottom = isEditMode ? 48 : 0
+      this.$nextTick(() => {
+        this.$refs.scroll.refresh()
+      })
+    }
+  },
+  data () {
+    return {
+      scrollBottom: 0
+    }
   },
   methods: {
     onScroll (offsetY) {
       this.setOffsetY(offsetY)
+    },
+    getShelfList () {
+      shelf().then(res => {
+        if (res.status === 200 && res.data && res.data.bookList) {
+          this.setShelfList(appendAddToShelf(res.data.bookList))
+        }
+      })
     }
+  },
+  mounted () {
+    this.getShelfList()
   }
 }
 </script>

@@ -1,5 +1,6 @@
 import { getReadTime } from './localstorage'
 import { realPx } from './utils'
+
 export const FONT_SIZE_LIST = [
   { fontSize: 12 },
   { fontSize: 14 },

@@ -48,6 +48,12 @@ export default {
   },
   methods: {
     onEditClick() {
+      if (!this.isEditMode) {
+        this.setShelfSelected([])
+        this.shelfList.forEach(item => {
+          item.selected = false
+        })
+      }
       this.setIsEditMode(!this.isEditMode)
     },
     clearCanche() {
