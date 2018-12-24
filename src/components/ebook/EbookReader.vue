@@ -24,6 +24,7 @@
     getLocation
     } from '../../utils/localstorage'
   import { flatten } from '../../utils/book'
+  import { getLocalForage } from '../../utils/localForage'
   global.ePub = Epub
   export default {
     mixins: [ebookMixin],
@@ -151,8 +152,7 @@
         })
       },
       // 阅读器解析
-      initEpub () {
-        const url = process.env.VUE_APP_RES_URL + '/epub/' + this.fileName + '.epub'
+      initEpub (url) {
         this.book = new Epub(url)
         this.setCurrentBook(this.book)
         this.initRendition()
@@ -168,7 +168,7 @@
               const loc = item.match(/\[(.*)\]!/)[1]
               this.navigation.forEach(nav => {
                 if (nav.href) {
-                  const href = nav.href.match(/^(.*)\.html$/)[1]
+                  const href = nav.href.match(/^(.*)\.html$/)
                   if (href === loc) {
                     nav.pagelist.push(item)
                   }
@@ -270,8 +270,19 @@
       }
     },
     mounted () {
-      this.setFileName(this.$route.params.fileName.split('|').join('/')).then(() => {
-        this.initEpub()
+      const books = this.$route.params.fileName.split('|')
+      const fileName = books[1]
+      getLocalForage(fileName, (err, blob) => {
+        if (!err && blob) {
+          this.setFileName(books.join('/')).then(() => {
+            this.initEpub(blob)
+          })
+        } else {
+          this.setFileName(books.join('/')).then(() => {
+            const url = process.env.VUE_APP_RES_URL + '/epub/' + this.fileName + '.epub'
+            this.initEpub(url)
+          })
+        }
       })
     }
   }

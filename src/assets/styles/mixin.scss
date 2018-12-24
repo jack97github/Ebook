@@ -40,6 +40,21 @@ $animationType: linear;
   word-break: keep-all;
 }
 
+@mixin scroll {
+  overflow-x: hidden;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@mixin leftBottom {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-end;
+}
+
 @mixin columnLeft {
   display: flex;
   flex-direction: column;

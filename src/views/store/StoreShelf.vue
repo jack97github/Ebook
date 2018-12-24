@@ -1,33 +1,30 @@
 <template>
   <div class="store-shelf">
-    <shelf-title></shelf-title>
-    <scroll
-    class="store-shelf-scroll-wrapper"
+    <shelf-title :title="$t('shelf.title')"></shelf-title>
+    <scroll class="store-shelf-scroll-wrapper"
     :top="0"
     :bottom="scrollBottom"
     @onScroll="onScroll"
     ref="scroll">
       <shelf-search></shelf-search>
-      <shelf-list></shelf-list>
-      <shelf-footer></shelf-footer>
+      <shelf-list :data="shelfList"></shelf-list>
     </scroll>
+    <shelf-footer></shelf-footer>
   </div>
 </template>
 
 <script>
-import ShelfTitle from '../../components/shelf/ShelfTitle'
-import { storeShelfMixin } from '../../utils/mixin'
-import Scroll from '../../components/common/Scroll'
-import ShelfSearch from '../../components/shelf/ShelfSearch'
-import ShelfList from '../../components/shelf/ShelfList'
-import shelfFooter from '../../components/shelf/shelfFooter'
-import { shelf } from '../../api/store'
-import { appendAddToShelf } from '../../utils/store'
+  import ShelfTitle from '../../components/shelf/ShelfTitle'
+  import { storeShelfMixin } from '../../utils/mixin'
+  import Scroll from '../../components/common/Scroll'
+  import ShelfSearch from '../../components/shelf/ShelfSearch'
+  import ShelfList from '../../components/shelf/ShelfList'
+  import shelfFooter from '../../components/shelf/shelfFooter'
 export default {
 mixins: [storeShelfMixin],
   components: {
-    ShelfTitle,
     Scroll,
+    ShelfTitle,
     ShelfSearch,
     ShelfList,
     shelfFooter
@@ -48,13 +45,6 @@ mixins: [storeShelfMixin],
   methods: {
     onScroll (offsetY) {
       this.setOffsetY(offsetY)
-    },
-    getShelfList () {
-      shelf().then(res => {
-        if (res.status === 200 && res.data && res.data.bookList) {
-          this.setShelfList(appendAddToShelf(res.data.bookList))
-        }
-      })
     }
   },
   mounted () {

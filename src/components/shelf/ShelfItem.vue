@@ -4,7 +4,8 @@
   @click="onItemClick">
     <component class="shelf-item-comp"
     :class="{'is-edit': isEditMode && data.type === 2}"
-    :is="item"></component>
+    :is="item"
+    :data="data"></component>
     <div class="icon-selected"
     v-show="isEditMode && data.type === 1"
     :class="{'is-selected': data.selected}"></div>

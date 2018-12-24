@@ -27,7 +27,7 @@
           </div>
         </div>
         <div class="text-wrapper">
-          <span class="progress-section-text">{{getSectionName()}}</span>
+          <span class="progress-section-text">{{getSectionName}}</span>
           <span>{{bookAvailable ? progress + '%' : '加载中...'}}</span>
         </div>
       </div>

@@ -35,18 +35,18 @@ export const storeShelfMixin = {
         this.setShelfCategory(categoryList)
       })
     },
-    getShelfList() {
+    getShelfList () {
       let shelfList = getBookShelf()
       if (!shelfList) {
         shelf().then(response => {
           if (response.status === 200 && response.data && response.data.bookList) {
             shelfList = appendAddToShelf(response.data.bookList)
             saveBookShelf(shelfList)
-            return this.setShelfList(shelfList)
+            this.setShelfList(shelfList)
           }
         })
       } else {
-        return this.setShelfList(shelfList)
+        this.setShelfList(shelfList)
       }
     },
     moveOutOfGroup(f) {
@@ -209,9 +209,6 @@ export const ebookMixin = {
     },
     getReadText () {
       return this.$t('book.haveRead').replace('$1', getReadTimeByMinute(this.fileName))
-    },
-    getSectionName () {
-      return this.section ? this.navigation[this.section].label : ''
     }
   }
 }

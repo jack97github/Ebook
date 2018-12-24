@@ -80,7 +80,7 @@ export function addCss(href) {
   document.getElementsByTagName('head')[0].appendChild(link)
 }
 
-export function removeCss (href) {
+export function removeCss(href) {
   const links = document.getElementsByTagName('link')
   for (let i = links.length; i >= 0; i--) {
     const link = links[i]

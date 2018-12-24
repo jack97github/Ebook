@@ -1,6 +1,6 @@
 <template>
   <div class="ebook-header">
-    <span class="ebook-header-text">{{getSectionName()}}</span>
+    <span class="ebook-header-text">{{getSectionName}}</span>
   </div>
 </template>
 
