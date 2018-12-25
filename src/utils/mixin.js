@@ -1,8 +1,28 @@
-import { mapGetters, mapActions } from 'vuex'
-import { themeList, addCss, removeAllCss, getReadTimeByMinute } from '../utils/book'
-import { getBookmark, saveLocation, getBookShelf, saveBookShelf } from './localstorage'
-import { gotoBookDetail, appendAddToShelf, computeId, removeAddFromShelf } from './store'
-import { shelf } from '../api/store'
+import {
+  mapGetters,
+  mapActions
+} from 'vuex'
+import {
+  themeList,
+  addCss,
+  removeAllCss,
+  getReadTimeByMinute
+} from '../utils/book'
+import {
+  getBookmark,
+  saveLocation,
+  getBookShelf,
+  saveBookShelf
+} from './localstorage'
+import {
+  gotoBookDetail,
+  appendAddToShelf,
+  computeId,
+  removeAddFromShelf
+} from './store'
+import {
+  shelf
+} from '../api/store'
 
 export const storeShelfMixin = {
   computed: {
@@ -35,18 +55,18 @@ export const storeShelfMixin = {
         this.setShelfCategory(categoryList)
       })
     },
-    getShelfList () {
+    getShelfList() {
       let shelfList = getBookShelf()
       if (!shelfList) {
         shelf().then(response => {
           if (response.status === 200 && response.data && response.data.bookList) {
             shelfList = appendAddToShelf(response.data.bookList)
             saveBookShelf(shelfList)
-            this.setShelfList(shelfList)
+            return this.setShelfList(shelfList)
           }
         })
       } else {
-        this.setShelfList(shelfList)
+        return this.setShelfList(shelfList)
       }
     },
     moveOutOfGroup(f) {
@@ -56,8 +76,7 @@ export const storeShelfMixin = {
         }
         return book
       })).then(() => {
-        const list = computeId(appendAddToShelf([].concat(
-          removeAddFromShelf(this.shelfList), ...this.shelfSelected)))
+        const list = computeId(appendAddToShelf([].concat(removeAddFromShelf(this.shelfList), ...this.shelfSelected)))
         this.setShelfList(list).then(() => {
           this.simpleToast(this.$t('shelf.moveBookOutSuccess'))
           if (f) f()
@@ -110,10 +129,10 @@ export const ebookMixin = {
       'offsetY',
       'isBookmark'
     ]),
-     themeList() {
-       return themeList(this)
-     },
-     getSectionName() {
+    themeList() {
+      return themeList(this)
+    },
+    getSectionName() {
       return this.section ? this.navigation[this.section].label : ''
     }
   },
@@ -139,7 +158,7 @@ export const ebookMixin = {
       'setOffsetY',
       'setIsBookmark'
     ]),
-    initGlobalStyle () {
+    initGlobalStyle() {
       removeAllCss()
       switch (this.defaultTheme) {
         case 'Default':
@@ -158,7 +177,7 @@ export const ebookMixin = {
           addCss(`${process.env.VUE_APP_RES_URL}/theme/theme_default.css`)
       }
     },
-    refreshLocation () {
+    refreshLocation() {
       const currentLocation = this.currentBook.rendition.currentLocation()
       if (currentLocation && currentLocation.start) {
         const startCfi = currentLocation.start.cfi
@@ -189,7 +208,7 @@ export const ebookMixin = {
         }
       }
     },
-    display (target, cb) {
+    display(target, cb) {
       if (target) {
         this.currentBook.rendition.display(target).then(() => {
           this.refreshLocation()
@@ -202,12 +221,12 @@ export const ebookMixin = {
         })
       }
     },
-    hideTitleAndMenu () {
+    hideTitleAndMenu() {
       this.setMenuVisible(false)
       this.setSettingVisible(-1)
       this.setFontFamilyVisible(false)
     },
-    getReadText () {
+    getReadText() {
       return this.$t('book.haveRead').replace('$1', getReadTimeByMinute(this.fileName))
     }
   }
